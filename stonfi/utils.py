@@ -4,6 +4,7 @@ from pytonlib import TonlibClient
 import requests
 from pathlib import Path
 import json
+import asyncio
 
 TEST_MNEMONICS = mnemonics = ['side', 'topic', 'eight', 'smile', 'banner', 'muffin', 'various', 'remind', 'ketchup', 'narrow', 'future', 'nuclear', 'tobacco', 'shoulder', 'fire', 'pulse', 'genuine', 'scissors', 'alcohol', 'lady', 'divorce', 'suffer', 'thunder', 'good']
 
@@ -59,8 +60,8 @@ async def create_wallet(client, deploy_wallet=None, testnet=False):
     data = await client.raw_send_message(message)
     balance = 0
     while balance <= 0:
+        await asyncio.sleep(3)
         await get_balance(client, wallet_address)
-        await asyncio.sleep(tonlib_timeout / 3)
     query = wallet.create_init_external_message()
     message = query["message"].to_boc(False)
     await client.raw_send_message(message)
