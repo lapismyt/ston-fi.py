@@ -35,8 +35,13 @@ async def create_wallet(client, deploy_wallet=None, testnet=False):
     else:
         pass
     if testnet == True:
-        wallet_address = wallet.address.to_string(True, True, True, True)
-        deploy_wallet_address = deploy_wallet.address.to_string(True, True, True, True)
+        try:
+            wallet_address = wallet.address.to_string(True, True, True, True)
+            deploy_wallet_address = deploy_wallet.address.to_string(True, True, True, True)
+        except AttributeError as err:
+            print(repr(err))
+            print(wallet)
+            print(deploy_wallet)
     else:
         wallet_address = wallet.address.to_string(True, True, True)
         deploy_wallet_address = deploy_wallet.address.to_string(True, True, True)
