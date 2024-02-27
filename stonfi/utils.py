@@ -64,9 +64,8 @@ async def create_wallet(client, deploy_wallet=None, testnet=False):
     data = await client.raw_send_message(message)
     balance = 0
     while balance <= 0:
-        await asyncio.sleep(3)
+        await asyncio.sleep(1)
         balance = await get_balance(client, wallet_address)
-        print(balance)
     query = wallet.create_init_external_message()
     message = query["message"].to_boc(False)
     await client.raw_send_message(message)
