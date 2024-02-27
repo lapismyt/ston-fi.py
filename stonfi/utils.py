@@ -24,7 +24,7 @@ async def get_seqno(client, address):
     return seqno
 
 async def get_balance(client, address):
-    return await client.raw_get_account_state(address)["balance"]
+    return (await client.raw_get_account_state(address))["balance"]
 
 async def create_wallet(client, deploy_wallet=None, testnet=False):
     wallet_tuple = Wallets.create(version=WalletVersionEnum.v3r2, workchain=0)
