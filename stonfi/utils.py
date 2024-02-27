@@ -45,15 +45,15 @@ async def create_wallet(client, deploy_wallet=None, testnet=False):
         pass
     if testnet == True:
         try:
-            wallet_address = wallet.address.to_string(True, True, True, True)
-            deploy_wallet_address = deploy_wallet.address.to_string(True, True, False, True)
+            wallet_address = wallet.address.to_string(True, True, False, True)
+            deploy_wallet_address = deploy_wallet.address.to_string(True, True, True, True)
         except AttributeError as err:
             print(repr(err))
             print(wallet)
             print(deploy_wallet)
     else:
-        wallet_address = wallet.address.to_string(True, True, True)
-        deploy_wallet_address = deploy_wallet.address.to_string(True, True, False)
+        wallet_address = wallet.address.to_string(True, True, False)
+        deploy_wallet_address = deploy_wallet.address.to_string(True, True, True)
     seqno = await get_seqno(client, deploy_wallet_address)
     query = deploy_wallet.create_transfer_message(to_addr=wallet_address, amount=to_nano(0.03, "ton"), seqno=seqno)
     message = query["message"].to_boc(False)
