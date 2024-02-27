@@ -33,7 +33,11 @@ async def create_wallet(client, deploy_wallet=None, testnet=False):
     pub_k = wallet_tuple[2]
     wallet = wallet_tuple[3]
     if deploy_wallet is None and testnet == True:
-        deploy_wallet = Wallets.from_mnemonics(mnemonics=TEST_MNEMONICS, version=WalletVersionEnum.v3r2, workchain=0)
+        dep_wallet_tuple = Wallets.from_mnemonics(mnemonics=TEST_MNEMONICS, version=WalletVersionEnum.v3r2, workchain=0)
+        dep_mnemonics = dep_wallet_tuple[0]
+        dep_priv_k = dep_wallet_tuple[1]
+        dep_pub_k = dep_wallet_tuple[2]
+        deploy_wallet = dep_wallet_tuple[3]
     elif deploy_wallet is None:
         raise Exception("Deploy wallet is None")
     else:
