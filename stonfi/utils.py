@@ -25,7 +25,11 @@ async def get_seqno(client, address):
     return seqno
 
 async def get_balance(client, address):
-    return int((await client.raw_get_account_state(address))["balance"])
+    balance = int((await client.raw_get_account_state(address))["balance"])
+    if balance <= 0:
+        return 0.0
+    else:
+        return balance / 10**9
 
 async def create_wallet(client, deploy_wallet=None, testnet=False):
     wallet_tuple = Wallets.create(version=WalletVersionEnum.v3r2, workchain=0)
