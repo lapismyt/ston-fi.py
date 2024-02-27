@@ -25,7 +25,7 @@ async def get_seqno(client, address):
     return seqno
 
 async def get_balance(client, address):
-    return (await client.raw_get_account_state(address))["balance"]
+    return int((await client.raw_get_account_state(address))["balance"])
 
 async def create_wallet(client, deploy_wallet=None, testnet=False):
     wallet_tuple = Wallets.create(version=WalletVersionEnum.v3r2, workchain=0)
@@ -62,6 +62,7 @@ async def create_wallet(client, deploy_wallet=None, testnet=False):
     while balance <= 0:
         await asyncio.sleep(3)
         balance = await get_balance(client, wallet_address)
+        print(balance)
     query = wallet.create_init_external_message()
     message = query["message"].to_boc(False)
     await client.raw_send_message(message)
