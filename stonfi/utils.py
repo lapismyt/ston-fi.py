@@ -55,7 +55,7 @@ async def create_wallet(client, deploy_wallet=None, testnet=False):
         wallet_address = wallet.address.to_string(True, True, True)
         deploy_wallet_address = deploy_wallet.address.to_string(True, True, True)
     seqno = await get_seqno(client, deploy_wallet_address)
-    query = deploy_wallet.create_transfer_message(to_addr=wallet_address, amount=to_nano(0.03, "ton"), seqno=seqno)
+    query = deploy_wallet.create_transfer_message(to_addr=wallet_address, amount=to_nano(0.03, "ton"), seqno=seqno, state_init=None, bounce=False)
     message = query["message"].to_boc(False)
     data = await client.raw_send_message(message)
     balance = 0
