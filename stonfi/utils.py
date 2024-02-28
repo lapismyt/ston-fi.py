@@ -8,7 +8,7 @@ import time
 TEST_MNEMONICS = ['side', 'topic', 'eight', 'smile', 'banner', 'muffin', 'various', 'remind', 'ketchup', 'narrow', 'future', 'nuclear', 'tobacco', 'shoulder', 'fire', 'pulse', 'genuine', 'scissors', 'alcohol', 'lady', 'divorce', 'suffer', 'thunder', 'good']
 
 def get_seqno(client, address):
-    resp = run_get_method(method="seqno", stack=[], address=address)
+    resp = client.run_get_method(address, "seqno")
     seqno = int(resp["stack"][0][1], 16)
     return seqno
 
