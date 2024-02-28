@@ -21,6 +21,7 @@ class ToncenterClient:
         return response.json()
 
     def send_message(self, boc):
+        print(boc)
         response = self._run("message", "POST", {"boc": boc})
         return response
 
