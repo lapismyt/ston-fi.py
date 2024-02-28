@@ -1,5 +1,3 @@
 tonsdk
 tvm_valuetypes
-aiohttp
-pytonlib
-pathlib
+requests
