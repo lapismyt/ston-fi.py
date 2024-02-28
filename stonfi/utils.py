@@ -1,37 +1,25 @@
 from tonsdk.utils import to_nano
 from tonsdk.contract.wallet import Wallets, WalletVersionEnum
-from pytonlib import TonlibClient
+from tonsdk.provider import ToncenterClient
 import requests
-from pathlib import Path
 import json
-import asyncio
+import time
 
-TEST_MNEMONICS = mnemonics = ['side', 'topic', 'eight', 'smile', 'banner', 'muffin', 'various', 'remind', 'ketchup', 'narrow', 'future', 'nuclear', 'tobacco', 'shoulder', 'fire', 'pulse', 'genuine', 'scissors', 'alcohol', 'lady', 'divorce', 'suffer', 'thunder', 'good']
+TEST_MNEMONICS = ['side', 'topic', 'eight', 'smile', 'banner', 'muffin', 'various', 'remind', 'ketchup', 'narrow', 'future', 'nuclear', 'tobacco', 'shoulder', 'fire', 'pulse', 'genuine', 'scissors', 'alcohol', 'lady', 'divorce', 'suffer', 'thunder', 'good']
 
-async def create_client(testnet=False, ls_index=2, keystore_dir="/tmp/ton_keystore", tonlib_timeout=15):
-    if testnet:
-        url = "https://ton.org/testnet-global.config.json"
-    else:
-        url == "https://ton.org/global-config.json"
-    config = requests.get(url).json()
-    Path(keystore_dir).mkdir(parents=True, exist_ok=True)
-    client = TonlibClient(ls_index=ls_index, config=config, keystore=keystore_dir, tonlib_timeout=tonlib_timeout)
-    await client.init()
-    return client
-
-async def get_seqno(client, address):
-    resp = await client.raw_run_method(method="seqno", stack_data=[], address=address)
+def get_seqno(client, address):
+    resp = run_get_method(method="seqno", stack=[], address=address)
     seqno = int(resp["stack"][0][1], 16)
     return seqno
 
-async def get_balance(client, address):
-    balance = int((await client.raw_get_account_state(address))["balance"])
+def get_balance(client, address):
+    balance = int(client.get_account_info(address)["balance"])
     if balance <= 0:
         return 0.0
     else:
         return balance / 10**9
 
-async def create_wallet(client, deploy_wallet=None, testnet=False):
+def create_wallet(client, deploy_wallet=None, testnet=False, init_amount=0.1):
     wallet_tuple = Wallets.create(version=WalletVersionEnum.v3r2, workchain=0)
     mnemonics = wallet_tuple[0]
     priv_k = wallet_tuple[1]
@@ -58,15 +46,15 @@ async def create_wallet(client, deploy_wallet=None, testnet=False):
     else:
         wallet_address = wallet.address.to_string(True, True, False)
         deploy_wallet_address = deploy_wallet.address.to_string(True, True, True)
-    seqno = await get_seqno(client, deploy_wallet_address)
-    query = deploy_wallet.create_transfer_message(to_addr=wallet_address, amount=to_nano(0.03, "ton"), seqno=seqno)
+    seqno = get_seqno(client, deploy_wallet_address)
+    query = deploy_wallet.create_transfer_message(to_addr=wallet_address, amount=to_nano(init_amount, "ton"), seqno=seqno)
     message = query["message"].to_boc(False)
-    data = await client.raw_send_message(message)
+    data = client.send_message(message)
     balance = 0
     while balance <= 0:
-        await asyncio.sleep(1)
-        balance = await get_balance(client, wallet_address)
+        time.sleep(1)
+        balance = get_balance(client, wallet_address)
     query = wallet.create_init_external_message()
     message = query["message"].to_boc(False)
-    await client.raw_send_message(message)
+    client.send_message(message)
     return wallet
