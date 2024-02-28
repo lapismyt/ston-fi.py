@@ -9,7 +9,12 @@ TEST_MNEMONICS = ['side', 'topic', 'eight', 'smile', 'banner', 'muffin', 'variou
 
 def get_seqno(client, address):
     resp = client.run_get_method(address, "seqno")
-    seqno = int(resp["stack"][0][1], 16)
+    try:
+        seqno = int(resp["stack"][0][1], 16)
+    except KeyError as err:
+        print(repr(err))
+        print(resp)
+        raise err
     return seqno
 
 def get_balance(client, address):
