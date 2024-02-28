@@ -10,7 +10,7 @@ TEST_MNEMONICS = ['side', 'topic', 'eight', 'smile', 'banner', 'muffin', 'variou
 def get_seqno(client, address):
     resp = client.run_get_method(address, "seqno")
     try:
-        seqno = int(resp["stack"][0][1], 16)
+        seqno = int(resp["stack"][0]["value"], 16)
     except KeyError as err:
         print(repr(err))
         print(resp)
