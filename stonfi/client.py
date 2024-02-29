@@ -43,20 +43,20 @@ class StonFiClient(ToncenterClient):
                                     offer_amount: int,
                                     referral_address: Address | None = None):
         print(2)
-        resp1 = self.get_jetton_wallets(
+        ask_jetton_wallets = self.get_jetton_wallets(
             owner_address=self.STONFI_ADDR,
             jetton_address=ask_jetton.to_string(True, True, True),
             limit=1
-        )["jetton_wallets"][0]["address"]
+        )["jetton_wallets"]
+        ask_jetton_wallet = Address(ask_jetton_wallets[0]["address"])
         print(3)
-        print(resp1)
 
-        resp2 = self.get_jetton_wallets(
+        offer_jetton_wallets = self.get_jetton_wallets(
             owner_address=user_wallet.to_string(),
             jetton_address=offer_jetton.to_string(True, True, True),
             limit=1
-        )
-        print(resp2)
+        )["jetton_wallets"]
+        offer_jetton_wallet = Address(offer_jetton_wallets[0]["address"])
         print(4)
 
         swap_body = self.create_swap_body(
