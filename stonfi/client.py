@@ -55,7 +55,7 @@ class StonFiClient(ToncenterClient):
             owner_address=user_wallet,
             jetton_address=offer_jetton.to_string(True, True, True),
             limit=1
-        )["jetton_wallets"][0]["address"]
+        )
         print(resp2)
         print(4)
 
