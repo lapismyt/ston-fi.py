@@ -33,7 +33,7 @@ class StonFiClient(ToncenterClient):
         else:
             cell = cell.store_uint(0, 1)
         print(7)
-        return cell.end_cell().to_boc(False)
+        return Slice(cell.end_cell())
 
     def create_swap_jetton_message(self,
                                     user_wallet: Address,
