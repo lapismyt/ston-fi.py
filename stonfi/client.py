@@ -93,7 +93,7 @@ class StonFiClient(ToncenterClient):
         offer_amount = to_nano(offer_amount, "ton")
         min_ask_amount = to_nano(min_ask_amount, "ton")
 
-        wallet = Wallets.from_mnemonics(mnemonics, version=WalletVersionEnum.v4r2, workchain=0)
+        wallet = Wallets.from_mnemonics(mnemonics, version=WalletVersionEnum.v4r2, workchain=0)[3]
 
         payload = self.create_swap_jetton_message(
             user_wallet = wallet.to_string(True, True, True),
