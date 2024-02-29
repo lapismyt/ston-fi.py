@@ -8,6 +8,7 @@ if __name__ == "__main__":
         install_requires = [
             "requests",
             "tonsdk",
-            "tvm_valuetypes"
+            "tvm_valuetypes",
+            "codecs"
         ]
     )

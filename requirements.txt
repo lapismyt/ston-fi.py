@@ -1,3 +1,4 @@
 tonsdk
 tvm_valuetypes
 requests
+codecs

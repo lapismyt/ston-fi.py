@@ -1,5 +1,6 @@
 import requests
 import json
+import codecs
 
 class ToncenterClient:
     def __init__(self, api_key, testnet=False):
@@ -21,6 +22,7 @@ class ToncenterClient:
         return response.json()
 
     def send_message(self, boc):
+        boc = codecs.decode(codecs.encode(boc, "base64"), "utf-8")
         print(boc)
         response = self._run("message", "POST", {"boc": boc})
         return response
