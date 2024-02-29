@@ -2,7 +2,7 @@ from tonsdk.contract.token.ft import JettonWallet
 from tonsdk.contract.wallet import Wallets, WalletVersionEnum
 from stonfi.ton import ToncenterClient
 from stonfi.utils import get_seqno
-from tonsdk.boc import begin_cell, Cell
+from tonsdk.boc import begin_cell, Cell, Slice
 from tonsdk.utils import Address, to_nano, from_nano
 import random
 import codecs
@@ -33,7 +33,7 @@ class StonFiClient(ToncenterClient):
         else:
             cell = cell.store_uint(0, 1)
         print(7)
-        return cell.end_cell()
+        return cell.end_cell().to_boc(False)
 
     def create_swap_jetton_message(self,
                                     user_wallet: Address,
