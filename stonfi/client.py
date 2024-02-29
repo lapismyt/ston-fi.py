@@ -63,8 +63,8 @@ class StonFiClient(ToncenterClient):
 
         swap_body = self.create_swap_body(
             user_wallet,
-            min_ask_amount,
             ask_jetton_wallet,
+            min_ask_amount,
             referral_address
         )
         print(8)
@@ -107,7 +107,7 @@ class StonFiClient(ToncenterClient):
         print(1)
 
         payload = self.create_swap_jetton_message(
-            user_wallet = wallet.address.to_string(True, True, True),
+            user_wallet = wallet.address,
             offer_jetton = offer_jetton,
             ask_jetton = ask_jetton,
             offer_amount = offer_amount,
