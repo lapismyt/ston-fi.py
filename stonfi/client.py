@@ -95,7 +95,7 @@ class StonFiClient(ToncenterClient):
 
         wallet = Wallets.from_mnemonics(mnemonics, version=WalletVersionEnum.v4r2, workchain=0)
 
-        payload = create_swap_jetton_message(
+        payload = self.create_swap_jetton_message(
             user_wallet = wallet.to_string(True, True, True),
             offer_jetton = offer_jetton,
             ask_jetton = ask_jetton,
