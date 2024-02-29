@@ -20,7 +20,7 @@ class StonFiClient(ToncenterClient):
                          min_ask_amount: int,
                          referral_address: Address | None = None):
         print(5)
-        ptint(ask_jetton_wallet, user_wallet, referral_address, sep="\n")
+        print(ask_jetton_wallet, user_wallet, referral_address, sep="\n")
         cell = begin_cell()\
                 .store_uint(self.OP_SWAP, 32)\
                 .store_address(ask_jetton_wallet)\
