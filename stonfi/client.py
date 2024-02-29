@@ -33,7 +33,7 @@ class StonFiClient(ToncenterClient):
         else:
             cell = cell.store_uint(0, 1)
         print(7)
-        finished = cell.end_cell().bytes_repr()
+        finished = codecs.encode(codecs.encode(cell.end_cell(), "utf-8"), "base64")
         return finished
 
     def create_swap_jetton_message(self,
