@@ -66,9 +66,6 @@ class StonFiClient(ToncenterClient):
             referral_address
         )
         print(8)
-
-        if query_id is None:
-            query_id = random.randint(1000000000, 9999999999)
         print(9)
         
         payload = JettonWallet().create_transfer_body(
