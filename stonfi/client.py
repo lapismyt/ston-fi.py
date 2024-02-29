@@ -19,16 +19,19 @@ class StonFiClient(ToncenterClient):
                          ask_jetton_wallet: Address,
                          min_ask_amount: int,
                          referral_address: Address | None = None):
+        print(5)
         cell = begin_cell()\
                 .store_uint(self.OP_SWAP, 32)\
                 .store_address(ask_jetton_wallet)\
                 .store_coins(min_ask_amount)\
                 .store_address(user_wallet)
+        print(6)
         if referral_address is None:
             cell = cell.store_uint(1, 1)\
                     .store_address(referral_address)
         else:
             cell = cell.store_uint(0, 1)
+        print(7)
         return cell.end_cell()
 
     def create_swap_jetton_message(self,
@@ -38,6 +41,7 @@ class StonFiClient(ToncenterClient):
                                     offer_jetton: Address,
                                     offer_amount: int,
                                     referral_address: Address | None = None):
+        print(2)
         ask_jetton_wallet = Address(
             self.get_jetton_wallets(
                 owner_address=self.STONFI_ADDR,
@@ -45,6 +49,7 @@ class StonFiClient(ToncenterClient):
                 limit=1
             )["jetton_wallets"][0]["address"]
         )
+        print(3)
 
         offer_jetton_wallet = Address(
             self.get_jetton_wallets(
@@ -53,6 +58,7 @@ class StonFiClient(ToncenterClient):
                 limit=1
             )["jetton_wallets"][0]["address"]
         )
+        print(4)
 
         swap_body = self.create_swap_body(
             user_wallet,
@@ -60,9 +66,11 @@ class StonFiClient(ToncenterClient):
             ask_jetton_wallet,
             referral_address
         )
+        print(8)
 
         if query_id is None:
             query_id = random.randint(1000000000, 9999999999)
+        print(9)
         
         payload = JettonWallet().create_transfer_body(
             to_address = ask_jetton_wallet,
@@ -70,6 +78,7 @@ class StonFiClient(ToncenterClient):
             forward_amount = self.GAS_NANO,
             forward_payload = swap_body
         )
+        print(10)
 
         return payload
 
@@ -94,6 +103,7 @@ class StonFiClient(ToncenterClient):
         min_ask_amount = to_nano(min_ask_amount, "ton")
 
         wallet = Wallets.from_mnemonics(mnemonics, version=WalletVersionEnum.v4r2, workchain=0)[3]
+        print(1)
 
         payload = self.create_swap_jetton_message(
             user_wallet = wallet.address.to_string(True, True, True),
@@ -103,8 +113,10 @@ class StonFiClient(ToncenterClient):
             min_ask_amount = min_ask_amount,
             referral_address = referral_address
         )
+        print(11)
 
         seqno = get_seqno(self, wallet)
         query = wallet.create_transfer_message(to_addr=self.STONFI_ADDR, amount=to_nano(0.05, "ton"), seqno=seqno, payload=payload)
+        print(12)
         message = query["message"].to_boc()
         return self.send_message(message)
