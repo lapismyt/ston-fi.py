@@ -23,7 +23,6 @@ class ToncenterClient:
 
     def send_message(self, boc):
         boc = codecs.decode(codecs.encode(boc, "base64"), "utf-8")
-        print(boc)
         response = self._run("message", "POST", {"boc": boc})
         return response
 

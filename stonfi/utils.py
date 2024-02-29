@@ -24,7 +24,7 @@ def get_balance(client, address):
     else:
         return balance / 10**9
 
-def create_wallet(client, deploy_wallet=None, testnet=False, init_amount=0.1):
+def create_wallet(client, deploy_wallet=None, testnet=False, init_amount=0.01):
     wallet_tuple = Wallets.create(version=WalletVersionEnum.v3r2, workchain=0)
     mnemonics = wallet_tuple[0]
     priv_k = wallet_tuple[1]
