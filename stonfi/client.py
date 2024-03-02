@@ -33,7 +33,7 @@ class StonFiClient(ToncenterClient):
         else:
             cell = cell.store_uint(0, 1)
         print(7)
-        finished = codecs.encode(cell.end_cell().bytes_repr(), "base64")
+        finished = codecs.encode(cell.end_cell(), "base64")
         return finished
 
     def create_swap_jetton_message(self,
@@ -113,6 +113,7 @@ class StonFiClient(ToncenterClient):
         print(11)
 
         seqno = get_seqno(self, wallet.address.to_string(True, True, True))
+        print(11.5)
         query = wallet.create_transfer_message(to_addr=self.STONFI_ADDR, amount=to_nano(0.05, "ton"), seqno=seqno, payload=payload)
         print(12)
         message = query["message"].to_boc()
