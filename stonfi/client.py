@@ -73,7 +73,7 @@ class StonFiClient(ToncenterClient):
             to_address = ask_jetton_wallet,
             jetton_amount = offer_amount,
             forward_amount = self.GAS_NANO,
-            forward_payload = swao_body
+            forward_payload = swap_body
             #forward_payload = swap_body.to_boc(False)
         )
         print(10)
