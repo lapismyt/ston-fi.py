@@ -112,7 +112,7 @@ class StonFiClient(ToncenterClient):
         )
         print(11)
 
-        seqno = get_seqno(self, wallet.to_string(True, True, True))
+        seqno = get_seqno(self, wallet.address.to_string(True, True, True))
         query = wallet.create_transfer_message(to_addr=self.STONFI_ADDR, amount=to_nano(0.05, "ton"), seqno=seqno, payload=payload)
         print(12)
         message = query["message"].to_boc()
