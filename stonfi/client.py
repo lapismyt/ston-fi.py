@@ -69,10 +69,12 @@ class StonFiClient(ToncenterClient):
         print(9)
         
         payload = self.create_jetton_transfer_message(
+        #payload = JettonWallet().create_transfer_body()
             to_address = ask_jetton_wallet,
             jetton_amount = offer_amount,
             forward_amount = self.GAS_NANO,
-            forward_payload = swap_body
+            forward_payload = swao_body
+            #forward_payload = swap_body.to_boc(False)
         )
         print(10)
 
@@ -129,10 +131,11 @@ class StonFiClient(ToncenterClient):
                 .store_uint(self.OP_REQUEST_TRANSFER, 32)\
                 .store_uint(query_id, 64)\
                 .store_grams(jetton_amount)\
+                .store_address(to_address)\
                 .store_address(response_address or to_address)\
                 .store_bit(0)\
                 .store_grams(forward_amount)\
-                .store_bit(0)\
                 .store_ref(forward_payload)\
+                .store_bit(1)\
                 .end_cell()
         return cell
