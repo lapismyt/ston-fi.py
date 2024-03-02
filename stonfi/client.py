@@ -69,7 +69,7 @@ class StonFiClient(ToncenterClient):
         print(8)
         print(9)
         
-        payload = JettonWallet().create_transfer_body(
+        payload = self.create_jetton_transfer_message(
             to_address = ask_jetton_wallet,
             jetton_amount = offer_amount,
             forward_amount = self.GAS_NANO,
@@ -117,3 +117,22 @@ class StonFiClient(ToncenterClient):
         print(12)
         message = query["message"].to_boc()
         return self.send_message(message)
+
+    def create_jetton_transfer_message(self,
+                                       to_address: Address,
+                                       jetton_amount: int,
+                                       forward_amount: int,
+                                       forward_payload: Cell,
+                                       response_address: Address = None,
+                                       query_id: int = 0):
+        cell = begin_cell()\
+                .store_uint(self.OP_REQUEST_TRANSFER, 32)\
+                .store_uint(query_id, 64)\
+                .store_grams(jetton_amount)\
+                .store_address(response_address or to_address)\
+                .store_bit(0)\
+                .store_grams(forward_amount)\
+                .store_bit(0)\
+                .store_ref(forward_payload)\
+                .end_cell()
+        return cell
