@@ -1,10 +1,10 @@
 from tonsdk.boc import begin_cell, Cell
 from tonsdk.utils import Address
 from tonsdk.utils import to_nano, from_nano
-from tonsdk.contract.token.ft.jetton_wallet import JettonWallet
 from typing import Optional
 from stonfi.ton import ToncenterClient
 from stonfi import utils
+from decimal import Decimal
 
 class OP_CODE:
     SWAP = 0x25938561
@@ -84,6 +84,8 @@ class Router:
         
         if forward_gas_amount is None:
             forward_ton_amount = to_nano(GAS_CONST.SWAP_FORWARD, 'ton')
+        else:
+            forward_ton_amount = forward_gas_amount
         
         if gas_amount is None:
             gas_amount = to_nano(GAS_CONST.SWAP, 'ton')
@@ -91,13 +93,13 @@ class Router:
         if query_id is None:
             query_id = 0
         
-        payload = JettonWallet().create_transfer_body(to_address = ask_jetton_wallet_address,
+        payload = utils.create_jetton_transfer_body(to_address = ask_jetton_wallet_address,
                                                       jetton_amount = to_nano(offer_amount, 'ton'),
                                                       forward_amount = forward_ton_amount,
-                                                      forward_payload = forward_payload.bytes_repr(),
+                                                      forward_payload = forward_payload,
                                                       response_address = offer_jetton_wallet_address,
                                                       query_id = query_id)
         
-        return {'to': offer_jetton_wallet_address,
+        return {'to': offer_jetton_wallet_address.to_string(True, True, True),
                 'payload': payload,
-                'amount': gas_amount}
+                'amount': from_nano(gas_amount, 'ton')}

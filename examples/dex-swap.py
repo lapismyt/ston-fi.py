@@ -30,7 +30,18 @@ swap_params = router.build_swap_jetton_tx_params(user_wallet_address = wallet_ad
                                                  ask_jetton_address = ask_jetton_address,
                                                  offer_amount = 0.1,
                                                  min_ask_amount = 0.017,
-                                                 referral_address = wallet_address) # BitString Overflow
+                                                 referral_address = wallet_address)
 
 print(swap_params)
 
+message = wallet.create_transfer_message(to_addr = swap_params['to'],
+                                         amount = swap_params['amount'],
+                                         seqno = get_seqno(client, wallet.address.to_string(True, True, True)),
+                                         payload = swap_params['payload'])['message']
+
+print(message.refs)
+for x in message.refs:
+    print(x.refs)
+
+response = client.send_message(message.to_boc()) # it's returning error. WHY
+print(response)
