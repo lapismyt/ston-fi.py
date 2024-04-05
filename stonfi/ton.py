@@ -34,7 +34,28 @@ class ToncenterClient:
         }
         response = self._run('runGetMethod', 'POST', data)
         return response
-
+    
+    def estimate_fee(self,
+                     address: str,
+                     body: str,
+                     init_code: str | None = None,
+                     init_data: str | None = None,
+                     ignore_chksig: bool = True):
+        body = codecs.decode(codecs.encode(body, 'base64'), 'utf-8')
+        data_raw = {
+            'address': address,
+            'body': body,
+            'init_code': init_code,
+            'init_data': init_data,
+            'ignore_chksig': ignore_chksig
+        }
+        data = {}
+        for item in data_raw.keys():
+            if data_raw[item] is not None:
+                data[item] = data_raw[item]
+        response = self._run('estimateFee', 'POST', data)
+        return response
+    
     def get_account_info(self, address):
         response = self._run('account', 'GET', {'address': address})
         return response

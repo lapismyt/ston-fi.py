@@ -14,6 +14,8 @@ class GAS_CONST:
     SWAP = 0.3
     SWAP_FORWARD = 0.265
 
+PROXY_TON = Address('EQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffLez')
+
 class Router:
     def __init__(self,
                  client: ToncenterClient,
@@ -45,8 +47,7 @@ class Router:
                     .store_address(user_wallet_address)
         
         if referral_address is not None:
-            payload = payload.store_uint(1, 1)\
-                                .store_address(referral_address)
+            payload = payload.store_uint(1, 1).store_address(referral_address)
         else:
             payload = payload.store_uint(0, 1)
 
@@ -63,6 +64,9 @@ class Router:
                                     forward_gas_amount: Optional[int | float] = None,
                                     referral_address: Optional[str | Address] = None,
                                     query_id: Optional[int] = None) -> Cell:
+        # known issues:
+        # wrong jetton amount with jettons that use not 9 decimals
+
         user_wallet_address = self._maybe_to_addr(user_wallet_address)
         offer_jetton_address = self._maybe_to_addr(offer_jetton_address)
         ask_jetton_address = self._maybe_to_addr(ask_jetton_address)
@@ -72,7 +76,7 @@ class Router:
                                                             jetton_address = offer_jetton_address.to_string(True, True, True),
                                                             limit = 1)['jetton_wallets'][0]
         offer_jetton_wallet_address = self._maybe_to_addr(offer_jetton_wallet['address'])
-            
+        
         ask_jetton_wallet = self.client.get_jetton_wallets(owner_address = self.address.to_string(True, True, True),
                                                            jetton_address = ask_jetton_address.to_string(True, True, True),
                                                            limit = 1)['jetton_wallets'][0]
