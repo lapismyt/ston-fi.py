@@ -9,5 +9,6 @@ if __name__ == "__main__":
             "requests",
             "tonsdk",
             "tvm_valuetypes",
+            "pytoniq"
         ]
     )

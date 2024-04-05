@@ -1,10 +1,11 @@
+# from pytoniq import begin_cell, Cell
+# from pytoniq import Address
 from tonsdk.boc import begin_cell, Cell
 from tonsdk.utils import Address
 from tonsdk.utils import to_nano, from_nano
 from typing import Optional
 from stonfi.ton import ToncenterClient
 from stonfi import utils
-from decimal import Decimal
 
 class OP_CODE:
     SWAP = 0x25938561
@@ -85,21 +86,24 @@ class Router:
         if forward_gas_amount is None:
             forward_ton_amount = to_nano(GAS_CONST.SWAP_FORWARD, 'ton')
         else:
-            forward_ton_amount = forward_gas_amount
+            forward_ton_amount = to_nano(forward_gas_amount, 'ton')
         
         if gas_amount is None:
             gas_amount = to_nano(GAS_CONST.SWAP, 'ton')
+        else:
+            gas_amount = to_nano(gas_amount, 'ton')
 
         if query_id is None:
             query_id = 0
         
-        payload = utils.create_jetton_transfer_body(to_address = ask_jetton_wallet_address,
-                                                      jetton_amount = to_nano(offer_amount, 'ton'),
-                                                      forward_amount = forward_ton_amount,
-                                                      forward_payload = forward_payload,
-                                                      response_address = offer_jetton_wallet_address,
-                                                      query_id = query_id)
+        payload = utils.create_jetton_transfer_body(destination = self.address,
+                                                    # destination = ask_jetton_wallet_address,
+                                                    amount = to_nano(offer_amount, 'ton'),
+                                                    forward_amount = forward_ton_amount,
+                                                    forward_payload = forward_payload,
+                                                    response_address = offer_jetton_wallet_address,
+                                                    query_id = query_id)
         
         return {'to': offer_jetton_wallet_address.to_string(True, True, True),
                 'payload': payload,
-                'amount': from_nano(gas_amount, 'ton')}
+                'amount': gas_amount}
