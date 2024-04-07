@@ -30,9 +30,7 @@ def ton_to_jetton_swap():
                                        limit = 1))
 
     time.sleep(1)
-    
-    # known issues:
-    # wrong jetton amount with jettons that use not 9 decimals
+
     swap_params = router.build_swap_proxy_ton_tx_params(user_wallet_address = wallet_address,
                                                         proxy_ton_address = proxy_ton_address,
                                                         ask_jetton_address = ask_jetton_address,
