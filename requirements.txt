@@ -1,3 +1,1 @@
-tonsdk
-tvm_valuetypes
-requests
+pytoniq
