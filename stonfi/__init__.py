@@ -13,3 +13,4 @@ from stonfi.constants import (
     LP_ACCOUNT_V1_ADDRESS
 )
 
+from stonfi.http import HTTPAPI
