@@ -2,11 +2,14 @@ from pytoniq import begin_cell, Cell, Address, LiteClientLike, Slice
 from stonfi.constants import OP, GAS
 from stonfi.contracts.jetton.jetton_root import JettonRoot
 from stonfi.contracts.jetton.jetton_wallet import JettonWallet
-from typing import Optional, Union
+from typing import Optional, Union, Type
 
-class Pool:
+class PoolV1:
     def __init__(self, address: Address):
         self.address = address
+    
+    def __eq__(self, other: Type['PoolV1']) -> bool:
+        return self.address == other.address
     
     async def create_collect_fees_body(self, query_id: int = 0):
         return begin_cell()\
@@ -105,8 +108,8 @@ class Pool:
         return {
             'reserve0': stack[0],
             'reserve1': stack[1],
-            'token0_wallet_address': stack[2].begin_parse().load_address(),
-            'token1_wallet_address': stack[3].begin_parse().load_address(),
+            'token0_wallet_address': stack[2].load_address(),
+            'token1_wallet_address': stack[3].load_address(),
             'lp_fee': stack[4],
             'protocol_fee': stack[5],
             'ref_fee': stack[6],

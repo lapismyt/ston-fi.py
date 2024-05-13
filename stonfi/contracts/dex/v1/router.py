@@ -3,7 +3,7 @@ from stonfi.constants import ROUTER_V1_ADDRESS, OP, GAS, PTON_V1_ADDRESS
 from stonfi.contracts.pTON.v1 import pTON_V1
 from stonfi.contracts.jetton.jetton_root import JettonRoot
 from stonfi.contracts.jetton.jetton_wallet import JettonWallet
-from stonfi.contracts.dex.v1.pool import Pool
+from stonfi.contracts.dex.v1.pool import PoolV1
 from typing import Optional, Union
 
 class RouterV1:
@@ -112,7 +112,7 @@ class RouterV1:
         
         return {
             'to': offer_jetton_wallet.address.to_str(),
-            'payload': payload,
+            'payload': payload.to_boc(False),
             'amount': offer_amount + forward_gas_amount
         }
     
@@ -186,17 +186,19 @@ class RouterV1:
                                jetton0: Union[Address, str],
                                jetton1: Union[Address, str],
                                provider: LiteClientLike):
+        jetton0_wallet_address: Address = (await JettonRoot.create_from_address(jetton0).get_wallet(self.address, provider)).address
+        jetton1_wallet_address: Address = (await JettonRoot.create_from_address(jetton1).get_wallet(self.address, provider)).address
         stack: list[Slice] = await provider.run_get_method(self.address,
                                                            'get_pool_address',
-                                                           [jetton0.to_cell().begin_parse(),
-                                                           jetton1.to_cell().begin_parse()])
+                                                           [jetton0_wallet_address.to_cell().begin_parse(),
+                                                            jetton1_wallet_address.to_cell().begin_parse()])
         return stack[0].load_address()
     
     async def get_pool(self,
                        jetton0: Union[Address, str],
                        jetton1: Union[Address, str],
                        provider: LiteClientLike):
-        return Pool(await self.get_pool_address(jetton0, jetton1, provider))
+        return PoolV1(await self.get_pool_address(jetton0, jetton1, provider))
     
     async def get_data(self, provider: LiteClientLike):
         stack: list[Union[Slice, Cell]] = await provider.run_get_method(self.address, 'get_router_data', [])

@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=42", "wheel", "pytoniq", "aiohttp"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stonfi"
+version = "0.7"
+description = "Python client for StonFi DEX"
+authors = [
+    {name = "LapisMYT (Nikita Gavrilin)", email = "nikitagavrilin005@gmail.com"}
+]
+readme = "README.md"
+classifiers = ["Development Status :: 4 - Beta",
+              "Intended Audience :: Developers",
+              "Programming Language :: Python :: 3.10",
+              "Programming Language :: Python :: 3.11",
+              "Programming Language :: Python :: 3.12",
+              "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+              "Topic :: Software Development :: Libraries",
+              "Topic :: Software Development :: Libraries :: Python Modules",
+              "Typing :: Typed"]
+
+[project.urls]
+Homepage = "https://github.com/lapismyt/ston-fi.py"
