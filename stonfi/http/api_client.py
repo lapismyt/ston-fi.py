@@ -5,15 +5,18 @@ class HTTPAPI:
     def __init__(self,
                  base_url: str = 'https://api.ston.fi/'):
         self.base_url = base_url.rstrip('/')
-        self.session = aiohttp.ClientSession()
     
     async def get(self, path: str, **kwargs):
-        async with self.session.get(self.base_url + path, params=kwargs) as resp:
-            return await resp.json()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.base_url + path, params=kwargs) as resp:
+                result = await resp.json()
+        return result
     
     async def post(self, path: str, **kwargs):
-        async with self.session.post(self.base_url + path, json=kwargs) as resp:
-            return await resp.json()
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self.base_url + path, json=kwargs) as resp:
+                result = await resp.json()
+        return result
     
     async def get_assets(self):
         return await self.get('/v1/assets')

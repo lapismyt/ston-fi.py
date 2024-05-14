@@ -56,7 +56,7 @@ class PoolV1:
                                    amount: int,
                                    jetton_wallet: Union[Address, str],
                                    provider: LiteClientLike):
-        
+        jetton_wallet = Address(jetton_wallet) if isinstance(jetton_wallet, str) else jetton_wallet
         stack = await provider.run_get_method(self.address,
                                               'get_expected_outputs',
                                               [amount,
