@@ -112,7 +112,7 @@ class RouterV1:
         
         return {
             'to': offer_jetton_wallet.address.to_str(),
-            'payload': payload.to_boc(False),
+            'payload': payload,
             'amount': offer_amount + forward_gas_amount
         }
     
