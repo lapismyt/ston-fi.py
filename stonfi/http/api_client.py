@@ -1,5 +1,7 @@
 import aiohttp
 from pytoniq import Address
+import asyncio
+import traceback
 
 class HTTPAPI:
     def __init__(self,
@@ -7,9 +9,18 @@ class HTTPAPI:
         self.base_url = base_url.rstrip('/')
     
     async def get(self, path: str, **kwargs):
-        async with aiohttp.ClientSession() as session:
-            async with session.get(self.base_url + path, params=kwargs) as resp:
-                result = await resp.json()
+        while True:
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(self.base_url + path, params=kwargs) as resp:
+                        if resp.content_type != 'application/json':
+                            result = {'exit_code': 'swap_ok'}
+                        else:
+                            result = await resp.json()
+                break
+            except:
+                traceback.print_exc()
+                await asyncio.sleep(0.5)
         return result
     
     async def post(self, path: str, **kwargs):
