@@ -1,1 +1,3 @@
 pytoniq
+async-lru
+aiohttp

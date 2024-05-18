@@ -10,8 +10,8 @@ class RouterV1:
     def __init__(self, address = ROUTER_V1_ADDRESS):
         self.address = Address(address)
 
-    async def create_swap_body(self,
-                               user_wallet_address: Union[Address, str],
+    @staticmethod
+    async def create_swap_body(user_wallet_address: Union[Address, str],
                                min_ask_amount: int,
                                ask_jetton_wallet_address: Union[Address, str],
                                referral_address: Optional[Union[Address, str]] = None):
@@ -29,7 +29,44 @@ class RouterV1:
                     .store_address(referral_address)
 
         return body.end_cell()
-    
+
+    async def _build_swap(self,
+                          user_wallet_address: Union[Address, str],
+                          offer_jetton_address: Union[Address, str],
+                          ask_jetton_address: Union[Address, str],
+                          offer_amount: int,
+                          min_ask_amount: int,
+                          provider: LiteClientLike,
+                          referral_address: Optional[Union[Address, str]] = None,
+                          gas_amount: Optional[int] = GAS.JETTON_TO_JETTON.GAS_AMOUNT,
+                          forward_gas_amount: Optional[
+                              int] = GAS.JETTON_TO_JETTON.FORWARD_GAS_AMOUNT,
+                          query_id: Optional[int] = 0,
+                          offer_owner_address=None):
+
+        if not offer_owner_address:
+            offer_owner_address = self.address
+
+        offer_jetton_wallet: JettonWallet = await JettonRoot(offer_jetton_address).get_wallet(offer_owner_address, provider)
+        ask_jetton_wallet: JettonWallet = await JettonRoot(ask_jetton_address).get_wallet(self.address, provider)
+
+        forward_payload = await self.create_swap_body(user_wallet_address=user_wallet_address,
+                                                      min_ask_amount=min_ask_amount,
+                                                      ask_jetton_wallet_address=ask_jetton_wallet.address,
+                                                      referral_address=referral_address)
+
+        payload = offer_jetton_wallet.create_transfer_payload(destination=self.address,
+                                                              amount=offer_amount,
+                                                              query_id=query_id,
+                                                              response_address=user_wallet_address,
+                                                              forward_amount=forward_gas_amount,
+                                                              forward_payload=forward_payload)
+        return {
+            'to': offer_jetton_wallet.address.to_str(),
+            'payload': payload,
+            'amount': gas_amount
+        }
+
     async def build_swap_jetton_to_jetton_tx_params(self,
                                                     user_wallet_address: Union[Address, str],
                                                     offer_jetton_address: Union[Address, str],
@@ -41,27 +78,20 @@ class RouterV1:
                                                     gas_amount: Optional[int] = GAS.JETTON_TO_JETTON.GAS_AMOUNT,
                                                     forward_gas_amount: Optional[int] = GAS.JETTON_TO_JETTON.FORWARD_GAS_AMOUNT,
                                                     query_id: Optional[int] = 0):
-        offer_jetton_wallet: JettonWallet = await JettonRoot(offer_jetton_address).get_wallet(user_wallet_address, provider)
-        ask_jetton_wallet: JettonWallet = await JettonRoot(ask_jetton_address).get_wallet(self.address, provider)
+        return await self._build_swap(
+            user_wallet_address=user_wallet_address,
+            offer_jetton_address=offer_jetton_address,
+            ask_jetton_address=ask_jetton_address,
+            offer_amount=offer_amount,
+            min_ask_amount=min_ask_amount,
+            provider=provider,
+            referral_address=referral_address,
+            gas_amount=gas_amount,
+            forward_gas_amount=forward_gas_amount,
+            query_id=query_id,
+            offer_owner_address=user_wallet_address
+        )
 
-        forward_payload = await self.create_swap_body(user_wallet_address = user_wallet_address,
-                                                      min_ask_amount = min_ask_amount,
-                                                      ask_jetton_wallet_address = ask_jetton_wallet.address,
-                                                      referral_address = referral_address)
-        
-        payload = offer_jetton_wallet.create_transfer_payload(destination = self.address,
-                                                              amount = offer_amount,
-                                                              query_id = query_id,
-                                                              response_address = user_wallet_address,
-                                                              forward_amount = forward_gas_amount,
-                                                              forward_payload = forward_payload)
-        
-        return {
-            'to': offer_jetton_wallet.address.to_str(),
-            'payload': payload,
-            'amount': gas_amount
-        }
-    
     async def build_swap_jetton_to_ton_tx_params(self,
                                                  user_wallet_address: Union[Address, str],
                                                  offer_jetton_address: Union[Address, str],
@@ -74,16 +104,18 @@ class RouterV1:
                                                  forward_gas_amount: Optional[int] = GAS.JETTON_TO_TON.FORWARD_GAS_AMOUNT,
                                                  query_id: Optional[int] = 0):
         
-        return await self.build_swap_jetton_to_jetton_tx_params(user_wallet_address = user_wallet_address,
-                                                                offer_jetton_address = offer_jetton_address,
-                                                                ask_jetton_address = proxy_ton_address,
-                                                                offer_amount = offer_amount,
-                                                                min_ask_amount = min_ask_amount,
-                                                                provider = provider,
-                                                                referral_address = referral_address,
-                                                                gas_amount = gas_amount,
-                                                                forward_gas_amount = forward_gas_amount,
-                                                                query_id = query_id)
+        return await self._build_swap(
+                    user_wallet_address=user_wallet_address,
+                    offer_jetton_address=offer_jetton_address,
+                    ask_jetton_address=proxy_ton_address,
+                    offer_amount=offer_amount,
+                    min_ask_amount=min_ask_amount,
+                    provider=provider,
+                    referral_address=referral_address,
+                    gas_amount=gas_amount,
+                    forward_gas_amount=forward_gas_amount,
+                    query_id=query_id,
+                    offer_owner_address=user_wallet_address)
     
     async def build_swap_ton_to_jetton_tx_params(self,
                                                 user_wallet_address: Union[Address, str],
@@ -95,29 +127,22 @@ class RouterV1:
                                                 referral_address: Optional[Union[Address, str]] = None,
                                                 forward_gas_amount: Optional[int] = GAS.TON_TO_JETTON.FORWARD_GAS_AMOUNT,
                                                 query_id: Optional[int] = 0):
-        offer_jetton_wallet: JettonWallet = await JettonRoot(proxy_ton_address).get_wallet(self.address, provider)
-        ask_jetton_wallet: JettonWallet = await JettonRoot(ask_jetton_address).get_wallet(self.address, provider)
 
-        forward_payload = await self.create_swap_body(user_wallet_address = user_wallet_address,
-                                                      min_ask_amount = min_ask_amount,
-                                                      ask_jetton_wallet_address = ask_jetton_wallet.address,
-                                                      referral_address = referral_address)
-        
-        payload = offer_jetton_wallet.create_transfer_payload(destination = self.address,
-                                                              amount = offer_amount,
-                                                              query_id = query_id,
-                                                              response_address = user_wallet_address,
-                                                              forward_amount = forward_gas_amount,
-                                                              forward_payload = forward_payload)
-        
-        return {
-            'to': offer_jetton_wallet.address.to_str(),
-            'payload': payload,
-            'amount': offer_amount + forward_gas_amount
-        }
-    
-    async def create_provide_liquidity_body(self,
-                                            router_wallet_address: Union[Address, str],
+        return await self._build_swap(
+            user_wallet_address=user_wallet_address,
+            offer_jetton_address=proxy_ton_address,
+            ask_jetton_address=ask_jetton_address,
+            offer_amount=offer_amount,
+            min_ask_amount=min_ask_amount,
+            provider=provider,
+            referral_address=referral_address,
+            gas_amount=forward_gas_amount + offer_amount,
+            forward_gas_amount=forward_gas_amount,
+            query_id=query_id,
+        )
+
+    @staticmethod
+    async def create_provide_liquidity_body(router_wallet_address: Union[Address, str],
                                             min_lp_out: int):
         return begin_cell()\
                 .store_uint(OP.PROVIDE_LIQUIDITY, 32)\

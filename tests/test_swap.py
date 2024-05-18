@@ -24,7 +24,7 @@ async def test_swap():
     resp = await wallet.transfer(
         params['to'],
         params['amount'],
-        Cell.one_from_boc(params['payload'])
+        params['payload']
     )
     await provider.close_all()
     assert resp == 1

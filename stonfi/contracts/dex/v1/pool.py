@@ -10,8 +10,9 @@ class PoolV1:
     
     def __eq__(self, other: Type['PoolV1']) -> bool:
         return self.address == other.address
-    
-    async def create_collect_fees_body(self, query_id: int = 0):
+
+    @staticmethod
+    async def create_collect_fees_body(query_id: int = 0):
         return begin_cell()\
                 .store_uint(OP.COLLECT_FEES, 32)\
                 .store_uint(query_id, 64)\
@@ -25,9 +26,9 @@ class PoolV1:
             'payload': await self.create_collect_fees_body(query_id),
             'gas_amount': gas_amount
         }
-    
-    async def create_burn_body(self,
-                               amount: int,
+
+    @staticmethod
+    async def create_burn_body(amount: int,
                                response_address: Union[Address, str],
                                query_id: int = 0):
         return begin_cell()\
