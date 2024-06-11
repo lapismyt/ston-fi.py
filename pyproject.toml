@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stonfi"
-version = "0.11"
+version = "0.12"
 description = "Async Python SDK for StonFi DEX"
 authors = [
     {name = "LapisMYT (Nikita Gavrilin)", email = "nikitagavrilin005@gmail.com"}
