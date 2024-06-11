@@ -9,6 +9,10 @@ description = "Async Python SDK for StonFi DEX"
 authors = [
     {name = "LapisMYT (Nikita Gavrilin)", email = "nikitagavrilin005@gmail.com"}
 ]
+dependencies = [
+    "pytoniq",
+    "aiohttp"
+]
 readme = "README.md"
 classifiers = ["Development Status :: 4 - Beta",
               "Intended Audience :: Developers",
