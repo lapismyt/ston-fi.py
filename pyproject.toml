@@ -11,7 +11,8 @@ authors = [
 ]
 dependencies = [
     "pytoniq",
-    "aiohttp"
+    "aiohttp",
+    "async-lru"
 ]
 readme = "README.md"
 classifiers = ["Development Status :: 4 - Beta",
