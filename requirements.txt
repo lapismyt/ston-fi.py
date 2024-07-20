@@ -1,3 +1,4 @@
 pytoniq
 async-lru
 aiohttp
+dataclasses_json
