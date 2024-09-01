@@ -7,12 +7,15 @@ name = "stonfi"
 version = "0.12"
 description = "Async Python SDK for StonFi DEX"
 authors = [
-    {name = "LapisMYT (Nikita Gavrilin)", email = "nikitagavrilin005@gmail.com"}
+    {name = "Nikita Ugnich", email = "nikitagavrilin005@gmail.com"},
+    {name = "Dmitry Neutron"},
+    {name = "Ivan Platonov"}
 ]
 dependencies = [
     "pytoniq",
     "aiohttp",
-    "async-lru"
+    "async-lru",
+    "dataclasses-json"
 ]
 readme = "README.md"
 classifiers = ["Development Status :: 4 - Beta",
