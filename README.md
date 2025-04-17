@@ -6,7 +6,7 @@
   <h3 align="center">StonFi Python SDK</h3>
 </p>
 
-**⚠️ ONLY STON.FI V1 IS SUPPORTED FOR NOW!**
+**⚠️ ONLY STON.FI V1 IS SUPPORTED (PARTIALLY) FOR NOW!**
 
 ### Testnet
 
